@@ -107,3 +107,4 @@ venv.bak/
 *.out
 config_ebloc.json
 config_meta.json
+website/node_modules/

@@ -1,0 +1,119 @@
+[type="date"] {
+  background:#fff url(https://cdn1.iconfinder.com/data/icons/cc_mono_icon_set/blacks/16x16/calendar_2.png)  97% 50% no-repeat ;
+}
+[type="date"]::-webkit-inner-spin-button {
+  display: none;
+}
+[type="date"]::-webkit-calendar-picker-indicator {
+  opacity: 0;
+}
+
+/* custom styles */
+body {
+  padding: 4em;
+  background: #e5e5e5;
+  font: 13px/1.4 Geneva, 'Lucida Sans', 'Lucida Grande', 'Lucida Sans Unicode', Verdana, sans-serif;
+}
+label {
+  display: block;
+}
+input[type=date] {
+  background-color: #2764ae;
+  border: 1px solid #c4c4c4;
+  border-radius: 5px;
+  padding: 3px 5px;
+  box-shadow: inset 0 3px 6px rgba(0,0,0,0.1);
+  width: 140px;
+  height: 40px;
+  margin-right: 10px;
+  margin-left: 10px;
+}
+
+input[type="date"]::-webkit-clear-button {
+    display: none;
+}
+
+h1 {
+    color: #2764ae;
+    font-family: verdana;
+    font-size: 300%;
+    margin-top: 0px;
+}
+
+h2 {
+    color: #2764ae;
+    font-family: verdana;
+    font-size: 200%;
+}
+
+h3 {
+    color: #2764ae;
+    font-family: verdana;
+    font-size: 100%;
+}
+
+input[type=text], select{
+  width: 17%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  resize: vertical;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+input[type=text], textarea{
+  width: 80%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  resize: vertical;
+}
+
+textarea {
+  overflow: auto;
+  font-family: verdana;
+  font-size: 140%;
+}
+
+input[type=number]{
+  width: 12%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  resize: vertical;
+}
+
+button {
+    background-color: #2764ae;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin-right: 20px;
+    margin-left: 20px;
+}
+
+p {
+    color: #2764ae;
+    font-family: Helvetica;
+    font-size: 160%;
+    margin-right: 10px;
+    margin-left: 10px;
+}
+
+hr {
+    color: #2764ae;
+    display: block;
+    height: 1px;
+    border: 0;
+    border-top: 4px solid #ccc;
+    margin: 1em 0;
+    padding: 0;
+}

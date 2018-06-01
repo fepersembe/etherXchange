@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="stylesheet" href="styles.css">
+<title>etherXchange</title>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="functions.js" type="text/javascript"></script>
+<script type='text/javascript' >
+    // Ceyhun Uzunoglu         - 2009400015
+    // Furkan Erdem Persemebe  - 2008400036
+</script>
+</head>
+<body onload="onStart()">
+    <h1>etherXchange</h1>
+    <hr></hr>
+        <textarea id="resultTop" rows="2" cols="50" readonly></textarea>
+        <hr></hr>
+        <h3>You must select ECB or TCMB. We have financial data between 1.1.1999 and Today</h3>
+        <select id="bank" onchange="changeCurrencies()">
+            <option value="ECB" selected>ECB - European Central Bank</option>
+            <option value="TCMB">TCMB - TÜrkiye Cumhuriyeti Merkez Bankası</option>
+        </select>
+        <button onclick="setToday()">Set dates to Today</button>
+        <hr></hr>
+        <h2>CURRENCY CONVERSION</h2>
+        <p>
+            Date: <input id="dateCur" type="date" name="dateCur" value="2018-01-01"></input>
+            Type: <select id="currencyType">
+            <option value="Buying">Buying</option>
+            <option value="Selling" selected>Selling</option></select>
+        </p>
+        <p> Currency From: <select id="currencyFrom"></select>
+        Currency To: <select id="currencyTo"></select>
+        
+        </p>
+        <p>
+        Amount: <input id="amount" rows="1" cols="30" type="number"/>
+        <button onclick="convert()"> Convert </button>
+        Result: <input id="result" type="number" rows="1" cols="30" value="0.0000" readonly>    
+        </p>
+        <hr></hr>
+        <p>
+        <h2> GET CURRENCY DATA </h2>
+        </p>
+        <p>
+        Currency From: <select id="currencyFromBottom"></select>
+        Currency To: <select id="currencyToBottom"></select>
+         Type: <select id="currencyTypeBottom">
+            <option value="Buying">Buying</option>
+            <option value="Selling" selected>Selling</option></select>
+        </p>
+        <hr></hr>
+        <p>
+        Date: <input id="dateSingle" type="date" name="dateSingle" value="2018-01-01"></input>
+        <button onclick="getCrossRate()">Get Cross-Rate Currency Data</button>
+        <button onclick="getAllData()">Get All Currency Data</button>
+        </p>
+        <p>
+         Start Date: <input id="startDate" type="date" name="startDate" value="2018-01-01"></input>
+         End Date: <input id="endDate" type="date" name="endDate" value="2018-01-01">         
+        <button onclick="getCrossRateBetweenDates()">Get Cross-Rate Between Dates</button>
+        <button onclick="getAllDataBetweenDates()">Get All Currency Data Between Dates</button>
+        </p>
+        <hr></hr>
+    <p>
+        <textarea id="resultLabel" rows="10" cols="50" readonly></textarea>
+    </p>
+
+</body>
+</html>
