@@ -1,0 +1,3 @@
+https://sdw.ecb.europa.eu/quickviewexport.do?SERIES_KEY=120.EXR.D.USD.EUR.SP00.A&type=csv
+
+http://www.ecb.int/stats/eurofxref/eurofxref-hist.zip

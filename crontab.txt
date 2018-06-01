@@ -1,0 +1,4 @@
+0 20 * * * /usr/bin/env bash -c 'cd $HOME/CmpE492 && /usr/bin/python3 data_provider.py' > $HOME/CmpE492/LOG/CRON/ropsten_today.log 2>&1
+
+
+0 19 * * * /usr/bin/env bash -c 'cd $HOME/CmpE492 && /usr/bin/python3 data_provider_ebloc.py' > $HOME/CmpE492/LOG/CRON/ebloc_today.log 2>&1
