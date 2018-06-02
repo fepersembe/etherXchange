@@ -10,6 +10,10 @@
     var currencies = ["EUR","USD","TRY","GBP","BGN","CHF","CNY","DKK","AUD","SEK","CAD","NOK","JPY","RON","RUB","KWD","SAR","IRR","PKR","CZK","HUF","PLN","ISK","HRK","BRL","HKD","IDR","ILS","INR","KRW","MXN","MYR","NZD","PHP","SGD","THB","ZAR"];    var ecbcurrencies = [];
     var currencyNames = ["Euro","US Dollar","Turkish Lira","Pound Sterling","Bulgarian Lev","Swiss Franc","Chinese Yuan Renminbi","Danish Krone","Australian Dollar","Swedish Krona","Canadian Dollar","Norwegian Krone","Japanese Yen","Romanian Leu","Russian Rouble","Kuwaiti Dinar","Saudi Arabian Riyal","Iranian Rial","Pakistani Rupee","Czech Koruna","Hungarian Forint","Polish Zloty","Icelandic Krona","Crotian Kuna","Brazilian Real","Hong Kong Dollar","Indonesian Rupiah","Israeli Shekel","Indian Rupee","South Korean Won","Mexican Peso","Malaysian Ringgit","New Zealand Dollar","Philippine Piso","Singapore Dollar","Thai Baht","South African Rand"];
     
+    var values = [];
+    var names = [];
+    var completed;
+
     //Add Metamask for further transactions
     window.addEventListener('load', function() {
 
@@ -118,7 +122,7 @@
         var now = new Date();
         now.setHours(HOUR);
         var tstart = Math.round(now.getTime()/1e3);
-        var res = getCrossRateTCMBDataSelling(tstart,"EUR","USD",function(result){
+        var res = getCrossRateTCMBDataSelling(1,2,tstart,"EUR","USD",function(result){
             if(result == 0){
                 tstart -= SECONDS_IN_A_DAY;
             }
@@ -169,11 +173,13 @@
         var currencyTo = document.getElementById("currencyToBottom").value;
         document.getElementById("resultLabel").value = "";
         var bank = document.getElementById("bank").value;
+        console.log(bank);
         if(bank == "ECB"){
             getCrossRateECB(date,date,currencyFrom,currencyTo);
         }
         else if (bank == "TCMB"){
             var type = document.getElementById("currencyType").value;
+            console.log(type);
             if(type == "Forex Selling"){
                 getCrossRateTCMBSelling(date,date,currencyFrom,currencyTo);
             }
@@ -217,20 +223,21 @@
         var tstart = Math.round(startDate.getTime()/1e3);
         var tend = Math.round(endDate.getTime()/1e3);
         var count = 0;
-        var dates = [];
+        var no_of_days = (tend-tstart)/86400+1;
+        completed = 0
+        values.length = 0;
+        names.length = 0;
+        
         while(tstart <= tend){
-            dates[dates.length] = stringFromEpochTime(tstart);
-            var res = getCrossRateDataECB(tstart,currencyFrom,currencyTo,function(result){
-                document.getElementById("resultLabel").value = document.getElementById("resultLabel").value + dates[count] + ":  " + result + "\n";
-                count++;
-            });
+            names[names.length] = stringFromEpochTime(tstart);
+            getCrossRateDataECB(count,no_of_days,tstart,currencyFrom,currencyTo,function(){});
             tstart += SECONDS_IN_A_DAY;
-        }
-          
+            count++;
+        }  
     }
 
     // Connects to Smart Contract via Web3.js and gets value
-    function getCrossRateDataECB(date,currencyFrom,currencyTo,_callback){
+    function getCrossRateDataECB(index,max,date,currencyFrom,currencyTo,_callback){
         var contract = web3js.eth.contract(abi,function(error, result){
             if(!error) {
                 //
@@ -242,12 +249,19 @@
         var currencyFromHex = convertToHex( currencyFrom);
         var currencyToHex = convertToHex( currencyTo);
         exchangeRate = contract.convert_x_to_y_ecb(parseInt(date), currencyFromHex, currencyToHex, function(error_2, result_2){
-        if(!error_2) {
-            var exchangeRate = parseInt(result_2)/1e9;
-            _callback(exchangeRate);
-        }else {
-            console.error(error_2);
-        }
+            if(!error_2) {
+                completed++;
+                var exchangeRate = parseInt(result_2)/1e9;
+                values[index] = exchangeRate;
+                _callback(exchangeRate);
+                if(completed == max){
+                    for(var j = 0;j<values.length;j++){
+                        document.getElementById("resultLabel").value = document.getElementById("resultLabel").value + names[j] + ":  " + values[j] + "\n";
+                    }
+                }
+            } else {
+                console.error(error_2);
+            }
         });
     }
 
@@ -256,19 +270,21 @@
         var tstart = Math.round(startDate.getTime()/1e3);
         var tend = Math.round(endDate.getTime()/1e3);
         var count = 0;
-        var dates = [];
+        var no_of_days = (tend-tstart)/86400+1;
+        completed = 0
+        values.length = 0;
+        names.length = 0;
+        
         while(tstart <= tend){
-            dates[dates.length] = stringFromEpochTime(tstart);
-            var res = getCrossRateTCMBDataSelling(tstart,currencyFrom,currencyTo,function(result){
-                document.getElementById("resultLabel").value = document.getElementById("resultLabel").value + dates[count] + ":  " + result + "\n";
-                count++;
-            });
+            names[names.length] = stringFromEpochTime(tstart);
+            getCrossRateTCMBDataSelling(count,no_of_days,tstart,currencyFrom,currencyTo,function(){});
             tstart += SECONDS_IN_A_DAY;
+            count++;
         }
     }
 
     // Connects to Smart Contract via Web3.js and gets value
-    function getCrossRateTCMBDataSelling(date,currencyFrom,currencyTo,_callback){
+    function getCrossRateTCMBDataSelling(index,max,date,currencyFrom,currencyTo,_callback){
         var contract = web3js.eth.contract(abi,function(error, result){
             if(!error) {
                 //
@@ -280,12 +296,19 @@
         var currencyFromHex = convertToHex( currencyFrom);
         var currencyToHex = convertToHex( currencyTo);
         exchangeRate = contract.convert_x_to_y_tcmb_forexselling(parseInt(date), currencyFromHex, currencyToHex, function(error_2, result_2){
-        if(!error_2) {
-            var exchangeRate = parseInt(result_2)/1e9;
-            _callback(exchangeRate);
-        }else {
-            console.error(error_2);
-        }
+            if(!error_2) {
+                completed++;
+                var exchangeRate = parseInt(result_2)/1e9;
+                values[index] = exchangeRate;
+                _callback(exchangeRate);
+                if(completed == max){
+                    for(var j = 0;j<values.length;j++){
+                        document.getElementById("resultLabel").value = document.getElementById("resultLabel").value + names[j] + ":  " + values[j] + "\n";
+                    }
+                }
+            } else {
+                console.error(error_2);
+            }
         });
     }
 
@@ -294,19 +317,22 @@
         var tstart = Math.round(startDate.getTime()/1e3);
         var tend = Math.round(endDate.getTime()/1e3);
         var count = 0;
-        var dates = [];
+        var no_of_days = (tend-tstart)/86400+1;
+        completed = 0
+        values.length = 0;
+        names.length = 0;
+        
         while(tstart <= tend){
-            dates[dates.length] = stringFromEpochTime(tstart);
-            var res = getCrossRateTCMBDataBuying(tstart,currencyFrom,currencyTo,function(result){
-                document.getElementById("resultLabel").value = document.getElementById("resultLabel").value + dates[count] + ":  " + parseInt(result) + "\n";
-                count++;
-            });
+            names[names.length] = stringFromEpochTime(tstart);
+            getCrossRateTCMBDataBuying(count,no_of_days,tstart,currencyFrom,currencyTo,function(){});
             tstart += SECONDS_IN_A_DAY;
+            count++;
         }
     }
 
     // Connects to Smart Contract via Web3.js and gets value
-    function getCrossRateTCMBDataBuying(date,currencyFrom,currencyTo){
+    function getCrossRateTCMBDataBuying(index,max,date,currencyFrom,currencyTo,_callback){
+        console.log("b");
         var contract = web3js.eth.contract(abi,function(error, result){
             if(!error) {
                 //
@@ -317,19 +343,24 @@
 
         var currencyFromHex = convertToHex( currencyFrom);
         var currencyToHex = convertToHex(currencyTo);
+        console.log(currencyFrom + "  " + currencyTo);
         exchangeRate = contract.convert_x_to_y_tcmb_forexbuying(parseInt(date), currencyFromHex, currencyToHex, function(error_2, result_2){
-        if(!error_2) {
-            var exchangeRate = parseInt(result_2)/1e9;
-            return exchangeRate;            
-        }else {
-            console.error(error_2);
-        }
+            if(!error_2) {
+                completed++;
+                var exchangeRate = parseInt(result_2)/1e9;
+                values[index] = exchangeRate;
+                _callback(exchangeRate);
+                if(completed == max){
+                    for(var j = 0;j<values.length;j++){
+                        document.getElementById("resultLabel").value = document.getElementById("resultLabel").value + names[j] + ":  " + values[j] + "\n";
+                    }
+                }
+            } else {
+                console.error(error_2);
+            }
         });
     }
 
-    var values = [];
-    var names = [];
-    var completed;
     // onClick action of Button "Get All Data"
     function getAllData(){
         var bank = document.getElementById("bank").value;
@@ -558,7 +589,7 @@
 
         var amount = document.getElementById("amount").value;
 
-        var res = getCrossRateDataECB(tstart,currencyFrom,currencyTo,function(result){
+        var res = getCrossRateDataECB(1,2,tstart,currencyFrom,currencyTo,function(result){
             var exchanged = amount*result;
             document.getElementById("result").value = exchanged;        
          });
@@ -575,7 +606,7 @@
 
         var amount = document.getElementById("amount").value;
 
-        var exchangeRate = getCrossRateTCMBDataSelling(tstart,currencyFrom,currencyTo,function(result){
+        var exchangeRate = getCrossRateTCMBDataSelling(1,2,tstart,currencyFrom,currencyTo,function(result){
             var exchanged = amount*result;
             document.getElementById("result").value = exchanged;        
          });
@@ -592,7 +623,7 @@
 
         var amount = document.getElementById("amount").value;
 
-        var exchangeRate = getCrossRateTCMBDataBuying(tstart,currencyFrom,currencyTo,function(result){
+        var exchangeRate = getCrossRateTCMBDataBuying(1,2,tstart,currencyFrom,currencyTo,function(result){
             var exchanged = amount*result;
             document.getElementById("result").value = exchanged;        
          });
