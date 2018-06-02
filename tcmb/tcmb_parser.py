@@ -58,5 +58,5 @@ if __name__ == "__main__":
 	currencies.write_as_a_json()
 	print(currencies.CURRENCY_DICT["TRY"]["ForexSelling"])
 	#print(currencies.CURRENCY_DICT["EUR"])
-	#print(currencies.CURRENCY_DICT["Date"])
+	print(currencies.CURRENCY_DICT["Date"])
 	#print(currencies.CURRENCY_DICT["Tarih"])

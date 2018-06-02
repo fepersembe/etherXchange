@@ -1,7 +1,7 @@
 from urllib.request import urlopen
 import xml.etree.ElementTree as ET
 import json
-
+import time
 ECB_URL = 'http://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml'
 
 class ECB_Processor():
@@ -31,7 +31,7 @@ class ECB_Processor():
 if __name__ == "__main__":
 	ecb = ECB_Processor()
 	print(ecb)
-	#print(ecb.Currency_Dict["time"])
-	print(type(ecb.Currency_Dict["EUR"]))
+	#print(ecb.Currency_Dict["time"])	
+	#print(type(ecb.Currency_Dict["EUR"]))
 	#print(ecb.Currency_Dict["USD"])
-	ecb.write_as_a_json()
+	#ecb.write_as_a_json()

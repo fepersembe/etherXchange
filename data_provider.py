@@ -65,17 +65,21 @@ unix_time = epoch_day(time.time())
 def add_ecb():
 	unix_time = epoch_day(time.time())
 	ECB = ECB_Processor()
-	nonce = web3.eth.getTransactionCount(owner_address)
 	f = open(ecb_daily_log_path, "a")
-	for curr in ecb_currencies:
-		curr_code = bytes(curr, encoding='utf-8')
-		curr_value = web3.toInt(int(float(ECB.Currency_Dict[curr])*(10**9)))
-		transfer = contract_instance.functions.add_ecb(unix_time, curr_code, curr_value).buildTransaction({'gasPrice': gas_price, 'gas': gas, 'nonce': nonce})
-		signed = web3.eth.account.signTransaction(transfer, owner_private_key)
-		tx_hash = web3.eth.sendRawTransaction(signed.rawTransaction)
-		tx_hash = tx_hash.hex()
-		print(time.strftime("%Y-%m-%d %H:%M"), unix_time, tx_hash, curr_code, file=f)
-		nonce +=1
+	if(time.strftime("%Y-%m-%d") == ECB.Currency_Dict["time"]):
+		nonce = web3.eth.getTransactionCount(owner_address)
+		for curr in ecb_currencies:
+			curr_code = bytes(curr, encoding='utf-8')
+			curr_value = web3.toInt(int(float(ECB.Currency_Dict[curr])*(10**9)))
+			transfer = contract_instance.functions.add_ecb(unix_time, curr_code, curr_value).buildTransaction({'gasPrice': gas_price, 'gas': gas, 'nonce': nonce})
+			signed = web3.eth.account.signTransaction(transfer, owner_private_key)
+			tx_hash = web3.eth.sendRawTransaction(signed.rawTransaction)
+			tx_hash = tx_hash.hex()
+			print(time.strftime("%Y-%m-%d %H:%M"), unix_time, tx_hash, curr_code, file=f)
+			nonce +=1
+	else:
+		print(time.strftime("%Y-%m-%d %H:%M"), unix_time, "Weekend", file=f)
+	f.close()
 
 
 
@@ -84,24 +88,27 @@ def add_tcmb():
 	TCMB = TCMB_Processor()
 	nonce = web3.eth.getTransactionCount(owner_address)
 	f = open(tcmb_daily_log_path, "a")
-	for curr in tcmb_currencies:
-		curr_code = bytes(curr, encoding='utf-8')
-		curr_value_fb = web3.toInt(int(float(TCMB.CURRENCY_DICT[curr]["ForexBuying"])*(10**9)))
-		curr_value_fs = web3.toInt(int(float(TCMB.CURRENCY_DICT[curr]["ForexSelling"])*(10**9)))
-		# forex buying
-		transfer_fb = contract_instance.functions.add_tcmb_forexbuying(unix_time, curr_code, curr_value_fb).buildTransaction({'gasPrice': gas_price, 'gas': gas, 'nonce': nonce})
-		signed_fb = web3.eth.account.signTransaction(transfer_fb, owner_private_key)
-		tx_hash_fb = web3.eth.sendRawTransaction(signed_fb.rawTransaction)
-		tx_hash_fb = tx_hash_fb.hex()
-		print(time.strftime("%Y-%m-%d %H:%M"), unix_time, tx_hash_fb, curr_code, file=f)
-		nonce +=1
-		# forex selling
-		transfer_fs = contract_instance.functions.add_tcmb_forexselling(unix_time, curr_code, curr_value_fs).buildTransaction({'gasPrice': gas_price, 'gas': gas, 'nonce': nonce})
-		signed_fs = web3.eth.account.signTransaction(transfer_fs, owner_private_key)
-		tx_hash_fs = web3.eth.sendRawTransaction(signed_fs.rawTransaction)
-		tx_hash_fs = tx_hash_fs.hex()
-		print(time.strftime("%Y-%m-%d %H:%M"), unix_time, tx_hash_fs, curr_code, file=f)
-		nonce +=1
+	if(time.strftime("%m/%d/%Y") == TCMB.CURRENCY_DICT["Date"]):
+		for curr in tcmb_currencies:
+			curr_code = bytes(curr, encoding='utf-8')
+			curr_value_fb = web3.toInt(int(float(TCMB.CURRENCY_DICT[curr]["ForexBuying"])*(10**9)))
+			curr_value_fs = web3.toInt(int(float(TCMB.CURRENCY_DICT[curr]["ForexSelling"])*(10**9)))
+			# forex buying
+			transfer_fb = contract_instance.functions.add_tcmb_forexbuying(unix_time, curr_code, curr_value_fb).buildTransaction({'gasPrice': gas_price, 'gas': gas, 'nonce': nonce})
+			signed_fb = web3.eth.account.signTransaction(transfer_fb, owner_private_key)
+			tx_hash_fb = web3.eth.sendRawTransaction(signed_fb.rawTransaction)
+			tx_hash_fb = tx_hash_fb.hex()
+			print(time.strftime("%Y-%m-%d %H:%M"), unix_time, tx_hash_fb, curr_code, file=f)
+			nonce +=1
+			# forex selling
+			transfer_fs = contract_instance.functions.add_tcmb_forexselling(unix_time, curr_code, curr_value_fs).buildTransaction({'gasPrice': gas_price, 'gas': gas, 'nonce': nonce})
+			signed_fs = web3.eth.account.signTransaction(transfer_fs, owner_private_key)
+			tx_hash_fs = web3.eth.sendRawTransaction(signed_fs.rawTransaction)
+			tx_hash_fs = tx_hash_fs.hex()
+			print(time.strftime("%Y-%m-%d %H:%M"), unix_time, tx_hash_fs, curr_code, file=f)
+			nonce +=1
+	else:
+		print(time.strftime("%Y-%m-%d %H:%M"), unix_time, "Weekend", file=f)
 	f.close()
 
 
