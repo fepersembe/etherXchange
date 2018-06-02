@@ -173,13 +173,11 @@
         var currencyTo = document.getElementById("currencyToBottom").value;
         document.getElementById("resultLabel").value = "";
         var bank = document.getElementById("bank").value;
-        console.log(bank);
         if(bank == "ECB"){
             getCrossRateECB(date,date,currencyFrom,currencyTo);
         }
         else if (bank == "TCMB"){
             var type = document.getElementById("currencyType").value;
-            console.log(type);
             if(type == "Forex Selling"){
                 getCrossRateTCMBSelling(date,date,currencyFrom,currencyTo);
             }
@@ -256,6 +254,7 @@
                 _callback(exchangeRate);
                 if(completed == max){
                     for(var j = 0;j<values.length;j++){
+                        if( values[j] <= 0){continue;}
                         document.getElementById("resultLabel").value = document.getElementById("resultLabel").value + names[j] + ":  " + values[j] + "\n";
                     }
                 }
@@ -303,6 +302,7 @@
                 _callback(exchangeRate);
                 if(completed == max){
                     for(var j = 0;j<values.length;j++){
+                        if( values[j] <= 0){continue;}
                         document.getElementById("resultLabel").value = document.getElementById("resultLabel").value + names[j] + ":  " + values[j] + "\n";
                     }
                 }
@@ -332,7 +332,6 @@
 
     // Connects to Smart Contract via Web3.js and gets value
     function getCrossRateTCMBDataBuying(index,max,date,currencyFrom,currencyTo,_callback){
-        console.log("b");
         var contract = web3js.eth.contract(abi,function(error, result){
             if(!error) {
                 //
@@ -343,7 +342,6 @@
 
         var currencyFromHex = convertToHex( currencyFrom);
         var currencyToHex = convertToHex(currencyTo);
-        console.log(currencyFrom + "  " + currencyTo);
         exchangeRate = contract.convert_x_to_y_tcmb_forexbuying(parseInt(date), currencyFromHex, currencyToHex, function(error_2, result_2){
             if(!error_2) {
                 completed++;
@@ -352,6 +350,7 @@
                 _callback(exchangeRate);
                 if(completed == max){
                     for(var j = 0;j<values.length;j++){
+                        if( values[j] <= 0){continue;}
                         document.getElementById("resultLabel").value = document.getElementById("resultLabel").value + names[j] + ":  " + values[j] + "\n";
                     }
                 }
@@ -409,14 +408,13 @@
         var wd = contract.get_ecb(parseInt(tstart), currencyHex, function(error_2, result_2){
             if(!error_2) {
                 completed++;
-                console.log(completed);
                 var exchangeRate = parseInt(result_2)/1e9;
                 values[i - (i>16 ? 4:0)] = exchangeRate;
                 names[i - (i>16 ? 4:0)] = currencies[i];
                 if(completed == 33){
                     document.getElementById("resultLabel").value = document.getElementById("resultLabel").value + stringFromDate(date) + " Currency Data from European Central Bank as compared to 1 EUR \n";
-                    var j;
-                    for(j = 0;j<values.length;j++){
+                    for(var j = 0;j<values.length;j++){
+                        if( values[j] <= 0){continue;}
                         document.getElementById("resultLabel").value =  document.getElementById("resultLabel").value + names[j] + ":  " + values[j] + "\n";
                     }
                 }
@@ -455,6 +453,7 @@
                 if(completed == 19){
                     document.getElementById("resultLabel").value = document.getElementById("resultLabel").value + stringFromDate(date) + " Currency Data from TCMB Forex Selling as compared to 1 ABC = X TRY \n";
                     for(var j = 0;j<values.length;j++){
+                        if( values[j] <= 0){continue;}
                         document.getElementById("resultLabel").value =  document.getElementById("resultLabel").value + names[j] + ":  " + values[j] + "\n";
                     }
                     _callback(exchangeRate);
@@ -494,6 +493,7 @@
                 if(completed == 19){
                     document.getElementById("resultLabel").value = document.getElementById("resultLabel").value + stringFromDate(date) + " Currency Data from TCMB Forex Buying as compared to 1 ABC = X TRY \n";
                     for(var j = 0;j<values.length;j++){
+                        if( values[j] <= 0){continue;}
                         document.getElementById("resultLabel").value =  document.getElementById("resultLabel").value + names[j] + ":  " + values[j] + "\n";
                     }
                 }
@@ -526,7 +526,7 @@
     function getAllECB(startDate,endDate){
         var tstart = Math.round(startDate.getTime()/1e3);
         var tend = Math.round(endDate.getTime()/1e3);
-        var count = 1;
+        
         while(tstart <= tend){
             date = new Date(tstart*1e3);
             date.setHours(HOUR);
@@ -536,10 +536,10 @@
     }
 
     // Calls Get All Data function in a for loop between dates.
-    function getAllTCMBSelling(){
+    function getAllTCMBSelling(startDate,endDate){
         var tstart = Math.round(startDate.getTime()/1e3);
         var tend = Math.round(endDate.getTime()/1e3);
-        var count = 1;
+        
         while(tstart <= tend){
             date = new Date(tstart*1e3);
             date.setHours(HOUR);
@@ -549,10 +549,10 @@
     }
 
     // Calls Get All Data function in a for loop between dates.
-    function getAllTCMBBuying(){
+    function getAllTCMBBuying(startDate,endDate){
         var tstart = Math.round(startDate.getTime()/1e3);
         var tend = Math.round(endDate.getTime()/1e3);
-        var count = 1;
+        
         while(tstart <= tend){
             date = new Date(tstart*1e3);
             date.setHours(HOUR);
