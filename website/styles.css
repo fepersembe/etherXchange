@@ -18,7 +18,7 @@ label {
   display: block;
 }
 input[type=date] {
-  background-color: #2764ae;
+  font-color: #2764ae;
   border: 1px solid #c4c4c4;
   border-radius: 5px;
   padding: 3px 5px;

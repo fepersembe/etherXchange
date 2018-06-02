@@ -51,6 +51,12 @@
         setToday();
     }
 
+    function delay(t) {
+        return new Promise(function(resolve) { 
+            setTimeout(resolve, t)
+        });
+    }
+
     // Re-arrange de currency dropdowns for chosen bank
     function changeCurrencies() {
         // Define variables
@@ -71,8 +77,7 @@
 
         var bank = document.getElementById("bank").value;
         if(bank == "TCMB"){
-            var i;
-            for(i = 0;i < 19;i++){
+            for(var i = 0;i < 19;i++){
                 currencyFrom.options[currencyFrom.options.length] = new Option(currencies[i] + " - " + currencyNames[i] , currencies[i], false, false);
                 currencyTo.options[currencyTo.options.length] = new Option(currencies[i] + " - " + currencyNames[i] , currencies[i], false, false);
                 currencyFromBottom.options[currencyFromBottom.options.length] = new Option(currencies[i] + " - " + currencyNames[i] , currencies[i], false, false);
@@ -88,8 +93,7 @@
             currencyTypeBottom.options[currencyTypeBottom.options.length] = new Option('Forex Selling', 'Forex Selling', false, false);
         }
         else if(bank == "ECB"){
-            var i;
-            for(i = 0;i < currencies.length;i++){
+            for(var i = 0;i < currencies.length;i++){
                 if(i < 15 || i >18){
                     currencyFrom.options[currencyFrom.options.length] = new Option(currencies[i] + " - " + currencyNames[i] , currencies[i], false, false);
                     currencyTo.options[currencyTo.options.length] = new Option(currencies[i] + " - " + currencyNames[i] , currencies[i], false, false);
@@ -323,6 +327,9 @@
         });
     }
 
+    var values = [];
+    var names = [];
+    var completed;
     // onClick action of Button "Get All Data"
     function getAllData(){
         var bank = document.getElementById("bank").value;
@@ -346,8 +353,21 @@
     // Gets parameters from fields and connects to Smart Contract using Web3.js
     // Print the data returned from Smart Contract into "resultLabel"
     function getAllDataECB(date){
-        var values = [];
-        var names = [];
+        completed = 0;
+        values.length = 0;
+        names.length = 0;
+            
+        for(var i = 0;i < currencies.length;i++){
+            if(i < 15 || i >18){
+                getECB(i,date);                
+            }
+        }
+    }
+    
+    function getECB(i,date){
+        var currencyHex = convertToHex(currencies[i]);
+        var tstart = Math.round(date.getTime()/1e3);
+
         var contract = web3js.eth.contract(abi,function(error, result){
             if(!error) {
                 console.log("Contract creation succeeed.");
@@ -355,37 +375,39 @@
                 console.error(error);
             }
         }).at(contractaddress);
-        
-        var tstart = Math.round(date.getTime()/1e3);
-        
-
-        var i;
-        for(i = 0;i < currencies.length;i++){
-            if(i < 15 || i >18){
-                var currencyHex = convertToHex(currencies[i]);
-                names[names.length] = currencies[i];
-                wd = contract.get_ecb(parseInt(tstart), currencyHex, function(error_2, result_2){
-                    if(!error_2) {
-                        var exchangeRate = parseInt(result_2)/1e9;
-                        values[values.length] = exchangeRate;
-                        if(values.length == 32){
-                            document.getElementById("resultLabel").value = document.getElementById("resultLabel").value + stringFromDate(date) + " Currency Data from European Central Bank as compared to 1 EUR \n";
-                            var j;
-                            for(j = 0;j<values.length;j++){
-                                document.getElementById("resultLabel").value =  document.getElementById("resultLabel").value + names[j] + ":  " + values[j] + "\n";
-                            }
-                        }
-                    }else { console.error(error_2);
-                }});
-            }
-        }
+        var wd = contract.get_ecb(parseInt(tstart), currencyHex, function(error_2, result_2){
+            if(!error_2) {
+                completed++;
+                console.log(completed);
+                var exchangeRate = parseInt(result_2)/1e9;
+                values[i - (i>16 ? 4:0)] = exchangeRate;
+                names[i - (i>16 ? 4:0)] = currencies[i];
+                if(completed == 33){
+                    document.getElementById("resultLabel").value = document.getElementById("resultLabel").value + stringFromDate(date) + " Currency Data from European Central Bank as compared to 1 EUR \n";
+                    var j;
+                    for(j = 0;j<values.length;j++){
+                        document.getElementById("resultLabel").value =  document.getElementById("resultLabel").value + names[j] + ":  " + values[j] + "\n";
+                    }
+                }
+            }else { console.error(error_2);
+        }});
     }
 
     // Gets parameters from fields and connects to Smart Contract using Web3.js
     // Print the data returned from Smart Contract into "resultLabel"
     function getAllDataTCMBSelling(date,_callback){
-        var values = [];
-        var names = [];
+        values.length = 0;
+        names.length = 0;
+        completed = 0;
+        for(var i = 0;i < 19;i++){
+            getTCMBSelling(i,date,_callback);
+        }
+    }
+
+    function getTCMBSelling(i,date,_callback){
+        var currencyHex = convertToHex(currencies[i]);
+        var tstart = Math.round(date.getTime()/1e3);
+
         var contract = web3js.eth.contract(abi,function(error, result){
             if(!error) {
                 console.log("Contract creation succeeed.");
@@ -393,34 +415,38 @@
                 console.error(error);
             }
         }).at(contractaddress);
-        
-        var tstart = Math.round(date.getTime()/1e3);
-        var i;
-        for(i = 0;i < 19;i++){
-            var currencyHex = convertToHex(currencies[i]);
-            names[names.length] = currencies[i];
-            wd = contract.get_tcmb_forexselling(parseInt(tstart), currencyHex, function(error_2, result_2){
-                if(!error_2) {
-                    var exchangeRate = parseInt(result_2)/1e9;
-                    values[values.length] = exchangeRate;
-                    if(values.length == 19){
-                         document.getElementById("resultLabel").value = document.getElementById("resultLabel").value +  stringFromDate(date) + " Currency Data from TCMB Forex Selling as compared to 1 TRY \n";
-                        var j;
-                        for(j = 0;j<values.length;j++){
-                             document.getElementById("resultLabel").value =  document.getElementById("resultLabel").value + names[j] + ":  " + values[j] + "\n";
-                        }
-                        _callback("FINISHED");
+        var wd = contract.get_tcmb_forexselling(parseInt(tstart), currencyHex, function(error_2, result_2){
+            if(!error_2) {
+                completed++;
+                var exchangeRate = parseInt(result_2)/1e9;
+                values[i] = exchangeRate;
+                names[i] = currencies[i];
+                if(completed == 19){
+                    document.getElementById("resultLabel").value = document.getElementById("resultLabel").value + stringFromDate(date) + " Currency Data from TCMB Forex Selling as compared to 1 ABC = X TRY \n";
+                    for(var j = 0;j<values.length;j++){
+                        document.getElementById("resultLabel").value =  document.getElementById("resultLabel").value + names[j] + ":  " + values[j] + "\n";
                     }
-                }else { console.error(error_2);
-            }});
-        }
+                    _callback(exchangeRate);
+                }
+            }else { console.error(error_2);
+        }});
     }
 
     // Gets parameters from fields and connects to Smart Contract using Web3.js
     // Print the data returned from Smart Contract into "resultLabel"
     function getAllDataTCMBBuying(date){
-        var values = [];
-        var names = [];
+        values.length = 0;
+        names.length = 0;
+        completed = 0;        
+        for(var i = 0;i < 19;i++){
+            getTCMBBuying(i,date);
+        }
+    }
+
+    function getTCMBBuying(i,date){
+        var currencyHex = convertToHex(currencies[i]);
+        var tstart = Math.round(date.getTime()/1e3);
+
         var contract = web3js.eth.contract(abi,function(error, result){
             if(!error) {
                 console.log("Contract creation succeeed.");
@@ -428,28 +454,21 @@
                 console.error(error);
             }
         }).at(contractaddress);
-
-        var tstart = Math.round(date.getTime()/1e3);
-        var i;
-        for(i = 0;i < 19;i++){
-            var currencyHex = convertToHex(currencies[i]);
-            names[names.length] = currencies[i];
-            wd = contract.get_tcmb_forexbuying(parseInt(tstart), currencyHex, function(error_2, result_2){
-                if(!error_2) {
-                       var exchangeRate = parseInt(result_2)/1e9;
-                    values[values.length] = exchangeRate;
-                       if(values.length == 19){
-                        document.getElementById("resultLabel").value = document.getElementById("resultLabel").value + stringFromDate(date) + " Currency Data from TCMB Forex Buying as compared to 1 TRY \n";
-                        var j;
-                        for(j = 0;j<values.length;j++){
-                            document.getElementById("resultLabel").value =  document.getElementById("resultLabel").value + names[j] + ":  " + values[j] + "\n";
-                        }
+        var wd = contract.get_tcmb_forexbuying(parseInt(tstart), currencyHex, function(error_2, result_2){
+            if(!error_2) {
+                completed++;
+                var exchangeRate = parseInt(result_2)/1e9;
+                values[i] = exchangeRate;
+                names[i] = currencies[i];
+                if(completed == 19){
+                    document.getElementById("resultLabel").value = document.getElementById("resultLabel").value + stringFromDate(date) + " Currency Data from TCMB Forex Buying as compared to 1 ABC = X TRY \n";
+                    for(var j = 0;j<values.length;j++){
+                        document.getElementById("resultLabel").value =  document.getElementById("resultLabel").value + names[j] + ":  " + values[j] + "\n";
                     }
-                }else { console.error(error_2);
-            }});
-        }
+                }
+            }else { console.error(error_2);
+        }});
     }
-
     // onClick action of Button "Get All Data Between Dates"
     function getAllDataBetweenDates(){
         var bank = document.getElementById("bank").value;
