@@ -7,7 +7,7 @@ contract CurrencyHub {
 
     address public owner = msg.sender;
 
-    function isTodayAvailable() public returns(bool){
+    function isTodayAvailable() public view returns(bool){
         uint time = unixtime(now);
         uint val = get_ecb(time,"USD");
         if(val == 0){
@@ -16,7 +16,7 @@ contract CurrencyHub {
         return true;
     }
 
-    function isAvailable(uint _epoch_time) public returns(bool){
+    function isAvailable(uint _epoch_time) public view returns(bool){
         uint time = unixtime(_epoch_time);
         uint val = get_ecb(time, "USD");
         if(val == 0){
@@ -68,13 +68,6 @@ contract CurrencyHub {
         return (TCMB_forexselling[unixtime(_epoch_time)][_x] * 1000000000) / TCMB_forexselling[unixtime(_epoch_time)][_y];
     }
 
-    function convert_x_to_y_tcmb_banknotebuying(uint256 _epoch_time, bytes3 _x, bytes3 _y) public view returns(uint) {
-        return (TCMB_banknotebuying[unixtime(_epoch_time)][_x] * 1000000000) / TCMB_banknotebuying[unixtime(_epoch_time)][_y];
-    }
-
-    function convert_x_to_y_tcmb_banknoteselling(uint256 _epoch_time, bytes3 _x, bytes3 _y) public view returns(uint) {
-        return (TCMB_banknoteselling[unixtime(_epoch_time)][_x] * 1000000000) / TCMB_banknoteselling[unixtime(_epoch_time)][_y];
-    }
 
 
     function convert_x_to_y_ecb(uint256 _epoch_time, bytes3 _x, bytes3 _y) public view returns(uint) {
