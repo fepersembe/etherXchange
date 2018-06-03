@@ -43,7 +43,7 @@ web3 = Web3(IPCProvider(geth_ipc_path))
 web3.middleware_stack.inject(geth_poa_middleware, layer=0)
 
 web3.eth.defaultAccount = web3.eth.accounts[0]
-web3.personal.unlockAccount(web3.eth.accounts[0], owner_password, 60000000)
+web3.personal.unlockAccount(web3.eth.accounts[0], owner_password)
 
 contract_instance = web3.eth.contract(abi=contract_abi, address=contract_address, ContractFactoryClass=ConciseContract)
 
