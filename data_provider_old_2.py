@@ -10,19 +10,13 @@ tcmb_currencies = ["TRY", "USD", "AUD", "DKK", "EUR", "GBP", "CHF", "SEK", "CAD"
 		"KWD", "NOK", "SAR", "JPY", "BGN", "RON", "RUB", "IRR", "CNY", "PKR"]
 
 
-#return epoch date
-
 def epoch_day(epoch_time):
 	epoch_time = int(epoch_time)
 	return(epoch_time - (epoch_time % 86400))
 
-
 def daterange(start_date, end_date):
     for n in range(int ((end_date - start_date).days)):
         yield start_date + timedelta(n)
-
-# configuration
-#===============================================
 
 with open('config_meta.json') as json_data_file:
 	config_data = json.load(json_data_file)
@@ -38,27 +32,12 @@ BASE_URL = config_data["url"]["base_url"]
 
 contract_address =  Web3.toChecksumAddress(contract_address)
 
-#===============================================
-
-#--------------------------------------------------------------------------------
-# ropsten provider
-
 infura_provider = HTTPProvider('https://ropsten.infura.io')
 web3 = Web3([infura_provider])
 
-# contract instance
-
 contract_instance = web3.eth.contract(abi=contract_abi, address=contract_address)
 
-#--------------------------------------------------------------------------------
-
-
-#+++++++++++++++++++++++++++++++++++++++++++++++
-
 unix_time = epoch_day(time.time())
-
-#+++++++++++++++++++++++++++++++++++++++++++++++
-
 
 def add_old_tcmb():
 	start_date = date(2018, 6, 2)
@@ -68,8 +47,8 @@ def add_old_tcmb():
 	for single_date in daterange(start_date, end_date):
 		url = BASE_URL + str(single_date.year) + str(single_date.month).zfill(2) + "/" + str(single_date.day).zfill(2) + str(single_date.month).zfill(2) + str(single_date.year) + ".xml"
 		TCMB = TCMB_Processor(url)
+		unix_time = int(time.mktime(single_date.timetuple()))
 		if(bool(TCMB.CURRENCY_DICT)):
-			unix_time = int(time.mktime(single_date.timetuple()))
 			for curr in tcmb_currencies:
 				curr_code = bytes(curr, encoding='utf-8')
 				curr_value_fb = web3.toInt(int(float(TCMB.CURRENCY_DICT[curr]["ForexBuying"])*(10**9)))
@@ -88,6 +67,8 @@ def add_old_tcmb():
 				tx_hash_fs = tx_hash_fs.hex()
 				print(time.strftime("%Y-%m-%d %H:%M"), unix_time, tx_hash_fs, curr_code, file=f)
 				nonce +=1
+		else:
+			print(time.strftime("%Y-%m-%d %H:%M"), unix_time, "Weekend", file=f)
 	f.close()
 
 

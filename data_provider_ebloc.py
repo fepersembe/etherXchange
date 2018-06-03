@@ -9,24 +9,17 @@ import time
 tcmb_currencies = ["TRY", "USD", "AUD", "DKK", "EUR", "GBP", "CHF", "SEK", "CAD", 
 		"KWD", "NOK", "SAR", "JPY", "BGN", "RON", "RUB", "IRR", "CNY", "PKR"]
 
-
 ecb_currencies = ["EUR", "USD", "JPY", "BGN", "CZK", "DKK", "GBP", "HUF", "PLN", 
 		"RON", "SEK", "CHF", "ISK", "NOK", "HRK", "RUB", "TRY", "AUD", "BRL", 
 		"CAD", "CNY", "HKD", "IDR", "ILS", "INR", "KRW", "MXN", "MYR", "NZD", 
 		"PHP", "SGD", "THB", "ZAR"]
 
-#return epoch date
-
 def epoch_day(epoch_time):
 	epoch_time = int(epoch_time)
 	return(epoch_time - (epoch_time % 86400))
 
-# configuration
-#===============================================
-
 with open('config_ebloc.json') as json_data_file:
 	config_data = json.load(json_data_file)
-
 
 owner_address = config_data["owner"]["address"]
 owner_private_key = config_data["owner"]["private_key"]
@@ -39,14 +32,7 @@ ecb_daily_log_path = config_data["log"]["ecb_daily"]
 tcmb_daily_log_path = config_data["log"]["tcmb_daily"]
 geth_ipc_path = config_data["geth"]["geth_ipc_path"]
 
-
-
 contract_address =  Web3.toChecksumAddress(contract_address)
-
-#===============================================
-
-#--------------------------------------------------------------------------------
-
 
 web3 = Web3(IPCProvider(geth_ipc_path))
 web3.middleware_stack.inject(geth_poa_middleware, layer=0)
@@ -54,19 +40,9 @@ web3.middleware_stack.inject(geth_poa_middleware, layer=0)
 web3.eth.defaultAccount = web3.eth.accounts[0]
 web3.personal.unlockAccount(web3.eth.accounts[0], owner_password)
 
-# contract instance
-
 contract_instance = web3.eth.contract(abi=contract_abi, address=contract_address, ContractFactoryClass=ConciseContract)
 
-#--------------------------------------------------------------------------------
-
-
-#+++++++++++++++++++++++++++++++++++++++++++++++
-
 unix_time = Web3.toInt(epoch_day(time.time()))
-
-#+++++++++++++++++++++++++++++++++++++++++++++++
-
 
 def add_ecb():
 	unix_time = Web3.toInt(epoch_day(time.time()))
@@ -82,8 +58,6 @@ def add_ecb():
 	else:
 		print(time.strftime("%Y-%m-%d %H:%M"), unix_time, "Weekend", file=f)
 	f.close()
-
-
 
 def add_tcmb():
 	unix_time = Web3.toInt(epoch_day(time.time()))

@@ -7,7 +7,6 @@ import json
 import time
 from datetime import timedelta, date
 
-
 tcmb_currencies = ["TRY", "USD", "AUD", "DKK", "EUR", "GBP", "CHF", "SEK", "CAD", 
 		"KWD", "NOK", "SAR", "JPY", "BGN", "RON", "RUB", "IRR", "CNY", "PKR"]
 
@@ -17,8 +16,6 @@ ecb_currencies = ["EUR", "USD", "JPY", "BGN", "CZK", "DKK", "GBP", "HUF", "PLN",
 		"CAD", "CNY", "HKD", "IDR", "ILS", "INR", "KRW", "MXN", "MYR", "NZD", 
 		"PHP", "SGD", "THB", "ZAR"]
 
-#return epoch date
-
 def epoch_day(epoch_time):
 	epoch_time = int(epoch_time)
 	return(epoch_time - (epoch_time % 86400))
@@ -27,13 +24,8 @@ def daterange(start_date, end_date):
     for n in range(int ((end_date - start_date).days)):
         yield start_date + timedelta(n)
 
-
-# configuration
-#===============================================
-
 with open('config_ebloc.json') as json_data_file:
 	config_data = json.load(json_data_file)
-
 
 owner_address = config_data["owner"]["address"]
 owner_private_key = config_data["owner"]["private_key"]
@@ -48,31 +40,15 @@ BASE_URL = config_data["url"]["base_url"]
 
 contract_address =  Web3.toChecksumAddress(contract_address)
 
-#===============================================
-
-#--------------------------------------------------------------------------------
-
-
 web3 = Web3(IPCProvider(geth_ipc_path))
 web3.middleware_stack.inject(geth_poa_middleware, layer=0)
 
 web3.eth.defaultAccount = web3.eth.accounts[0]
 web3.personal.unlockAccount(web3.eth.accounts[0], owner_password, 60000000)
 
-# contract instance
-
 contract_instance = web3.eth.contract(abi=contract_abi, address=contract_address, ContractFactoryClass=ConciseContract)
 
-#--------------------------------------------------------------------------------
-
-
-#+++++++++++++++++++++++++++++++++++++++++++++++
-
 unix_time = Web3.toInt(epoch_day(time.time()))
-
-
-#+++++++++++++++++++++++++++++++++++++++++++++++
-
 
 def add_old_tcmb():
 	start_date = date(2018, 5, 1)
@@ -82,8 +58,8 @@ def add_old_tcmb():
 	for single_date in daterange(start_date, end_date):
 		url = BASE_URL + str(single_date.year) + str(single_date.month).zfill(2) + "/" + str(single_date.day).zfill(2) + str(single_date.month).zfill(2) + str(single_date.year) + ".xml"
 		TCMB = TCMB_Processor(url)
+		unix_time = Web3.toInt(int(time.mktime(single_date.timetuple())))
 		if(bool(TCMB.CURRENCY_DICT)):
-			unix_time = Web3.toInt(int(time.mktime(single_date.timetuple())))
 			for curr in tcmb_currencies:
 				curr_code = bytes(curr, encoding='utf-8')
 				curr_value_fb = web3.toInt(int(float(TCMB.CURRENCY_DICT[curr]["ForexBuying"])*(10**9)))
@@ -96,6 +72,8 @@ def add_old_tcmb():
 				tx_hash_fs = contract_instance.add_tcmb_forexselling(unix_time, curr_code, curr_value_fs, transact={'from': web3.eth.accounts[0]})
 				tx_hash_fs = tx_hash_fs.hex()
 				print(time.strftime("%Y-%m-%d %H:%M"), unix_time, tx_hash_fs, curr_code, file=f)
+		else:
+			print(time.strftime("%Y-%m-%d %H:%M"), unix_time, "Weekend", file=f)
 	f.close()
 
 

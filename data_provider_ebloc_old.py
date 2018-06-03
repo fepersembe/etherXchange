@@ -13,19 +13,12 @@ old_ecb_currencies = ['USD', 'JPY', 'BGN', 'CYP', 'CZK', 'DKK', 'EEK',
 		'CAD', 'CNY', 'HKD', 'IDR', 'ILS', 'INR', 'KRW', 'MXN', 'MYR', 'NZD', 
 		'PHP', 'SGD', 'THB', 'ZAR', 'EUR']
 
-
-#return epoch date
-
 def epoch_day(epoch_time):
 	epoch_time = int(epoch_time)
 	return(epoch_time - (epoch_time % 86400))
 
-# configuration
-#===============================================
-
 with open('config_ebloc.json') as json_data_file:
 	config_data = json.load(json_data_file)
-
 
 owner_address = config_data["owner"]["address"]
 owner_private_key = config_data["owner"]["private_key"]
@@ -39,30 +32,15 @@ geth_ipc_path = config_data["geth"]["geth_ipc_path"]
 
 contract_address =  Web3.toChecksumAddress(contract_address)
 
-#===============================================
-
-#--------------------------------------------------------------------------------
-
-
 web3 = Web3(IPCProvider(geth_ipc_path))
 web3.middleware_stack.inject(geth_poa_middleware, layer=0)
 
 web3.eth.defaultAccount = web3.eth.accounts[0]
 web3.personal.unlockAccount(web3.eth.accounts[0], owner_password, 60000000)
 
-# contract instance
-
 contract_instance = web3.eth.contract(abi=contract_abi, address=contract_address, ContractFactoryClass=ConciseContract)
 
-#--------------------------------------------------------------------------------
-
-
-#+++++++++++++++++++++++++++++++++++++++++++++++
-
 unix_time = Web3.toInt(epoch_day(time.time()))
-
-#+++++++++++++++++++++++++++++++++++++++++++++++
-
 
 def old_data_99():
 	OLD_DATA = ecb_upload.to_big_dict()

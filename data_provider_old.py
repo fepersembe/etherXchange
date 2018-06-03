@@ -11,14 +11,10 @@ old_ecb_currencies = ['USD', 'JPY', 'BGN', 'CYP', 'CZK', 'DKK', 'EEK',
 		'SKK', 'CHF', 'ISK', 'NOK', 'HRK', 'RUB', 'TRL', 'TRY', 'AUD', 'BRL', 
 		'CAD', 'CNY', 'HKD', 'IDR', 'ILS', 'INR', 'KRW', 'MXN', 'MYR', 'NZD', 
 		'PHP', 'SGD', 'THB', 'ZAR', 'EUR']
-#return epoch date
 
 def epoch_day(epoch_time):
 	epoch_time = int(epoch_time)
 	return(epoch_time - (epoch_time % 86400))
-
-# configuration
-#===============================================
 
 with open('config_meta.json') as json_data_file:
 	config_data = json.load(json_data_file)
@@ -31,32 +27,14 @@ gas = int(config_data["price"]["gas"])
 gas_price = Web3.toWei( int(config_data["price"]["gas_price"]), 'gwei')
 ecb_old_data_log_path = config_data["log"]["ecb_old_data"]
 
-
-
-
 contract_address =  Web3.toChecksumAddress(contract_address)
-
-#===============================================
-
-#--------------------------------------------------------------------------------
-# ropsten provider
 
 infura_provider = HTTPProvider('https://ropsten.infura.io')
 web3 = Web3([infura_provider])
 
-# contract instance
-
 contract_instance = web3.eth.contract(abi=contract_abi, address=contract_address)
 
-#--------------------------------------------------------------------------------
-
-
-#+++++++++++++++++++++++++++++++++++++++++++++++
-
 unix_time = epoch_day(time.time())
-
-#+++++++++++++++++++++++++++++++++++++++++++++++
-
 
 def old_data_99():
 	OLD_DATA = ecb_upload.to_big_dict()
@@ -76,7 +54,6 @@ def old_data_99():
 				print(time.strftime("%Y-%m-%d %H:%M"), unix_time, tx_hash, curr_code, file=f)
 				nonce +=1
 	f.close()
-
 
 if __name__ == "__main__":
 	old_data_99()
