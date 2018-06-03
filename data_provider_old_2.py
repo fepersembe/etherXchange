@@ -61,8 +61,8 @@ unix_time = epoch_day(time.time())
 
 
 def add_old_tcmb():
-	start_date = date(2017, 1, 3)
-	end_date = date(2018, 5, 30)
+	start_date = date(2018, 6, 2)
+	end_date = date(2018, 6, 3)
 	nonce = web3.eth.getTransactionCount(owner_address)
 	f = open(tcmb_old_data_log_path, "a")
 	for single_date in daterange(start_date, end_date):
