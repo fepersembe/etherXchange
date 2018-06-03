@@ -40,7 +40,7 @@ def old_data_99():
 	OLD_DATA = ecb_upload.to_big_dict()
 	unix_time = epoch_day(time.time())
 	nonce = web3.eth.getTransactionCount(owner_address)
-	f = open(old_data_log, "a")
+	f = open(ecb_old_data_log_path, "a")
 	for daily_dict in OLD_DATA:
 		unix_time = daily_dict['Date']
 		for curr in old_ecb_currencies:
