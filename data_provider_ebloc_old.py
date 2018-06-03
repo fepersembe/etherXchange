@@ -60,3 +60,4 @@ def old_data_99():
 
 if __name__ == "__main__":
 	old_data_99()
+	print(time.strftime("%Y-%m-%d %H:%M"), " DONE")

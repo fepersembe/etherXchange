@@ -84,3 +84,4 @@ def add_tcmb():
 if __name__ == "__main__":
 	add_ecb()
 	add_tcmb()
+	print(time.strftime("%Y-%m-%d %H:%M"), " DONE EBLOC add_ecb & add_tcmb")

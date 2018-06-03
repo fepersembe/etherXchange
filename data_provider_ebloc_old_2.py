@@ -79,3 +79,4 @@ def add_old_tcmb():
 
 if __name__ == "__main__":
 	add_old_tcmb()
+	print(time.strftime("%Y-%m-%d %H:%M"), " DONE")
