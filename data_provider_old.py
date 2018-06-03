@@ -42,7 +42,7 @@ def old_data_99():
 	nonce = web3.eth.getTransactionCount(owner_address)
 	f = open(ecb_old_data_log_path, "a")
 	for daily_dict in OLD_DATA:
-		unix_time = daily_dict['Date']
+		unix_time = Web3.toInt(daily_dict['Date'])
 		for curr in old_ecb_currencies:
 			if daily_dict[curr] != 0:
 				curr_code = bytes(curr, encoding='utf-8')
@@ -51,8 +51,8 @@ def old_data_99():
 				signed = web3.eth.account.signTransaction(transfer, owner_private_key)
 				tx_hash = web3.eth.sendRawTransaction(signed.rawTransaction)
 				tx_hash = tx_hash.hex()
-				print(time.strftime("%Y-%m-%d %H:%M"), unix_time, tx_hash, curr_code, file=f)
 				nonce +=1
+				print(time.strftime("%Y-%m-%d %H:%M"), unix_time, tx_hash, curr_code, file=f)
 	f.close()
 
 if __name__ == "__main__":
