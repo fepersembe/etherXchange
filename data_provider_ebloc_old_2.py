@@ -52,7 +52,7 @@ unix_time = Web3.toInt(epoch_day(time.time()))
 
 def add_old_tcmb():
 	start_date = date(2018, 5, 1)
-	end_date = date(2018, 5, 30)
+	end_date = date(2018, 6, 1)
 	TCMB = TCMB_Processor()
 	f = open(tcmb_old_log_path, "a")
 	for single_date in daterange(start_date, end_date):
