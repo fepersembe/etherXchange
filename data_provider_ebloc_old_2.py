@@ -53,7 +53,7 @@ contract_instance = web3.eth.contract(abi=contract_abi, address=contract_address
 unix_time = Web3.toInt(epoch_day(time.time()))
 
 def add_old_tcmb():
-	start_date = date(2018, 1, 1)
+	start_date = date(2018, 5, 1)
 	end_date = date(2018, 6, 1)
 	TCMB = TCMB_Processor()
 	f = open(tcmb_old_log_path, "a")
