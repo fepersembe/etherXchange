@@ -31,7 +31,7 @@ owner_private_key = config_data["owner"]["private_key"]
 contract_address = config_data["contract"]["address"]
 contract_abi = config_data["contract"]["abi"]
 gas = int(config_data["price"]["gas"])
-gas_price = web3.toWei( int(config_data["price"]["gas_price"]), 'gwei')
+gas_price = Web3.toWei( int(config_data["price"]["gas_price"]), 'gwei')
 ecb_daily_log_path = config_data["log"]["ecb_daily"]
 tcmb_daily_log_path = config_data["log"]["tcmb_daily"]
 
