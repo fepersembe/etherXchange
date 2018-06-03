@@ -39,13 +39,13 @@ BASE_URL = config_data["url"]["base_url"]
 
 contract_address =  Web3.toChecksumAddress(contract_address)
 
-#web3 = Web3(IPCProvider(geth_ipc_path))
-#web3.middleware_stack.inject(geth_poa_middleware, layer=0)
+web3 = Web3(IPCProvider(geth_ipc_path))
+web3.middleware_stack.inject(geth_poa_middleware, layer=0)
 
-web3 = Web3(HTTPProvider('http://localhost:8545'))
+#web3 = Web3(HTTPProvider('http://localhost:8545'))
 
 web3.eth.defaultAccount = owner_address
-web3.personal.unlockAccount(owner_address, owner_password, 60000000)
+#web3.personal.unlockAccount(owner_address, owner_password, 60000000)
 
 
 contract_instance = web3.eth.contract(abi=contract_abi, address=contract_address, ContractFactoryClass=ConciseContract)
