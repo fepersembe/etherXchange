@@ -20,6 +20,7 @@ ACCOUNT_ADDRESS = "" #config_data["owner"]["address"]
 ACCOUNT_PASSWORD = "" #config_data["owner"]["password"]
 contract_address = config_data["contract"]["address"]
 contract_abi = config_data["contract"]["abi"]
+geth_ipc_path = config_data["geth"]["geth_ipc_path"]
 
 contract_address =  Web3.toChecksumAddress(contract_address)
 
