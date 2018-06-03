@@ -40,10 +40,10 @@ BASE_URL = config_data["url"]["base_url"]
 contract_address =  Web3.toChecksumAddress(contract_address)
 
 web3 = Web3(IPCProvider(geth_ipc_path))
-web3.middleware_stack.inject(geth_poa_middleware, layer=0)
+web3.eth.defaultAccount = owner_address
+web3.personal.unlockAccount(owner_address, owner_password, 60000000)
 
-web3.eth.defaultAccount = web3.eth.accounts[0]
-web3.personal.unlockAccount(web3.eth.accounts[0], owner_password)
+web3.middleware_stack.inject(geth_poa_middleware, layer=0)
 
 contract_instance = web3.eth.contract(abi=contract_abi, address=contract_address, ContractFactoryClass=ConciseContract)
 
