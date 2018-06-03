@@ -28,7 +28,6 @@ with open('config_ebloc.json') as json_data_file:
 	config_data = json.load(json_data_file)
 
 owner_address = config_data["owner"]["address"]
-owner_private_key = config_data["owner"]["private_key"]
 owner_password = config_data["owner"]["password"]
 contract_address = config_data["contract"]["address"]
 contract_abi = config_data["contract"]["abi"]
