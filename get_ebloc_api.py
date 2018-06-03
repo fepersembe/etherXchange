@@ -1,5 +1,5 @@
 from web3 import Web3, HTTPProvider, IPCProvider
-from tcmb.tcmb_parser import TCMB_Processor
+from web3.contract import ConciseContract
 from web3.middleware import geth_poa_middleware
 import json
 import time
