@@ -66,14 +66,20 @@ def add_old_tcmb():
 				curr_code = bytes(curr, encoding='utf-8')
 				curr_value_fb = web3.toInt(int(float(TCMB.CURRENCY_DICT[curr]["ForexBuying"])*(10**9)))
 				curr_value_fs = web3.toInt(int(float(TCMB.CURRENCY_DICT[curr]["ForexSelling"])*(10**9)))
-				# forex buying
-				tx_hash_fb = contract_instance.add_tcmb_forexbuying(unix_time, curr_code, curr_value_fb, transact={'from': web3.eth.accounts[0]})
-				tx_hash_fb = tx_hash_fb.hex()
-				print(time.strftime("%Y-%m-%d %H:%M"), unix_time, tx_hash_fb, curr_code, file=f)
-				# forex selling
-				tx_hash_fs = contract_instance.add_tcmb_forexselling(unix_time, curr_code, curr_value_fs, transact={'from': web3.eth.accounts[0]})
-				tx_hash_fs = tx_hash_fs.hex()
-				print(time.strftime("%Y-%m-%d %H:%M"), unix_time, tx_hash_fs, curr_code, file=f)
+				try:
+					# forex buying
+					tx_hash_fb = contract_instance.add_tcmb_forexbuying(unix_time, curr_code, curr_value_fb, transact={'from': web3.eth.accounts[0]})
+					tx_hash_fb = tx_hash_fb.hex()
+					print(time.strftime("%Y-%m-%d %H:%M"), unix_time, tx_hash_fb, curr_code, file=f)
+				except Exception as e:
+					pass
+				try:
+					# forex selling
+					tx_hash_fs = contract_instance.add_tcmb_forexselling(unix_time, curr_code, curr_value_fs, transact={'from': web3.eth.accounts[0]})
+					tx_hash_fs = tx_hash_fs.hex()
+					print(time.strftime("%Y-%m-%d %H:%M"), unix_time, tx_hash_fs, curr_code, file=f)
+				except Exception as e:
+					pass
 		else:
 			print(time.strftime("%Y-%m-%d %H:%M"), unix_time, "Weekend", file=f)
 	f.close()
