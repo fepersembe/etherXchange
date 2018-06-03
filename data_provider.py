@@ -13,16 +13,15 @@ ecb_currencies = ["EUR", "USD", "JPY", "BGN", "CZK", "DKK", "GBP", "HUF", "PLN",
 		"CAD", "CNY", "HKD", "IDR", "ILS", "INR", "KRW", "MXN", "MYR", "NZD", 
 		"PHP", "SGD", "THB", "ZAR"]
 
-
-#return epoch date
 DAY = 86400
 
 def epoch_day(epoch_time):
 	epoch_time = int(epoch_time)
 	return(epoch_time - (epoch_time % DAY))
 
-# configuration
-#===============================================
+infura_provider = HTTPProvider('https://ropsten.infura.io')
+web3 = Web3([infura_provider])
+
 
 with open('config_meta.json') as json_data_file:
 	config_data = json.load(json_data_file)
@@ -37,30 +36,11 @@ ecb_daily_log_path = config_data["log"]["ecb_daily"]
 tcmb_daily_log_path = config_data["log"]["tcmb_daily"]
 
 
-
 contract_address =  Web3.toChecksumAddress(contract_address)
-
-#===============================================
-
-#--------------------------------------------------------------------------------
-# ropsten provider
-
-infura_provider = HTTPProvider('https://ropsten.infura.io')
-web3 = Web3([infura_provider])
-
-# contract instance
 
 contract_instance = web3.eth.contract(abi=contract_abi, address=contract_address)
 
-#--------------------------------------------------------------------------------
-
-
-#+++++++++++++++++++++++++++++++++++++++++++++++
-
 unix_time = epoch_day(time.time())
-#+++++++++++++++++++++++++++++++++++++++++++++++
-
-
 
 def add_ecb():
 	unix_time = epoch_day(time.time())
@@ -110,7 +90,6 @@ def add_tcmb():
 	else:
 		print(time.strftime("%Y-%m-%d %H:%M"), unix_time, "Weekend", file=f)
 	f.close()
-
 
 
 if __name__ == "__main__":
