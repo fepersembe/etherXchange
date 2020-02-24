@@ -8,7 +8,7 @@ attrs==18.1.0
 Babel==2.5.3
 backcall==0.1.0
 bitcoin==1.1.42
-bleach==2.1.3
+bleach==3.1.1
 Brlapi==0.6.6
 bumpversion==0.5.3
 certifi==2018.1.18
