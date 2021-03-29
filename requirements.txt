@@ -107,7 +107,7 @@ pycryptodome==3.6.1
 pycups==1.9.73
 pyethash==0.1.27
 pyflakes==1.6.0
-Pygments==2.2.0
+Pygments==2.7.4
 pygobject==3.26.1
 pylru==1.1.0
 pymacaroons==0.13.0
