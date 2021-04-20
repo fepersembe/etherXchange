@@ -96,7 +96,7 @@ pluggy==0.6.0
 prompt-toolkit==1.0.15
 protobuf==3.0.0
 ptyprocess==0.5.2
-py==1.5.3
+py==1.10.0
 py-geth==2.0.1
 py-solc==2.1.0
 pycairo==1.16.2
