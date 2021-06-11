@@ -172,7 +172,7 @@ watchdog==0.8.3
 wcwidth==0.1.7
 -e git+https://github.com/ethereum/web3.py.git@4e14029d84b8823c29c204bdf35322971cfc53a9#egg=web3
 webencodings==0.5.1
-websockets==4.0.1
+websockets==9.1
 when-changed==0.3.0
 widgetsnbextension==3.2.1
 xkit==0.0.0
